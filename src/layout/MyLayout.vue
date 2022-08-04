@@ -37,7 +37,6 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import ProductTable from "@/components/ProductTable.vue";
 
 export default defineComponent({
   setup() {

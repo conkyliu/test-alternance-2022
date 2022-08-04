@@ -9,8 +9,10 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import ProductTable from "@/components/ProductTable.vue";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-ignore
+import MyLayout from "@/layout/MyLayout";
 
-import MyLayout from "@/layout/index";
 export default defineComponent({
   components: { ProductTable, MyLayout },
   setup() {
