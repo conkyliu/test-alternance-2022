@@ -9,7 +9,9 @@
           mode="horizontal"
           :style="{ lineHeight: '64px' }"
         >
-          <a-menu-item key="1">Home</a-menu-item>
+          <a-menu-item key="1"
+            ><router-link to="/">Home</router-link></a-menu-item
+          >
           <!--        <a-menu-item key="2">nav 2</a-menu-item>-->
           <!--        <a-menu-item key="3">nav 3</a-menu-item>-->
         </a-menu>
@@ -22,11 +24,11 @@
         <!--        <a-breadcrumb-item>App</a-breadcrumb-item>-->
       </a-breadcrumb>
       <div :style="{ background: '#fff', padding: '24px', minHeight: '280px' }">
-<!--        <div>-->
-<!--          <a-typography-text mark style="font-size: 40px"-->
-<!--            >Open Food Facts-->
-<!--          </a-typography-text>-->
-<!--        </div>-->
+        <!--        <div>-->
+        <!--          <a-typography-text mark style="font-size: 40px"-->
+        <!--            >Open Food Facts-->
+        <!--          </a-typography-text>-->
+        <!--        </div>-->
         <slot></slot>
       </div>
     </a-layout-content>
@@ -40,7 +42,7 @@ import ProductTable from "@/components/ProductTable.vue";
 export default defineComponent({
   setup() {
     return {
-      selectedKeys: ref<string[]>(["1"]),
+      // selectedKeys: ref<string[]>(["1"]),
     };
   },
 });
