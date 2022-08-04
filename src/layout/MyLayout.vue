@@ -9,9 +9,9 @@
           mode="horizontal"
           :style="{ lineHeight: '64px' }"
         >
-          <a-menu-item key="1"
-            ><router-link to="/">Home</router-link></a-menu-item
-          >
+          <a-menu-item key="1">
+            <router-link to="/">Home</router-link>
+          </a-menu-item>
           <!--        <a-menu-item key="2">nav 2</a-menu-item>-->
           <!--        <a-menu-item key="3">nav 3</a-menu-item>-->
         </a-menu>
@@ -32,16 +32,30 @@
         <slot></slot>
       </div>
     </a-layout-content>
-    <a-layout-footer style="text-align: center"> </a-layout-footer>
+    <a-layout-footer style="text-align: center" class="footer_box">
+      <div style="font-size: 30px; color: #333">
+        <facebook-outlined style="margin: 4px" />
+        <instagram-outlined style="margin: 8px" />
+        <twitter-outlined style="margin: 4px" />
+      </div>
+      <div>Info · Support · Marketing</div>
+      <div>Terms of Use · Privacy Policy</div>
+      <div>© 2022 ELYF</div>
+    </a-layout-footer>
   </a-layout>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-
+import {
+  TwitterOutlined,
+  FacebookOutlined,
+  InstagramOutlined,
+} from "@ant-design/icons-vue";
 export default defineComponent({
+  components: { TwitterOutlined, FacebookOutlined, InstagramOutlined },
   setup() {
     return {
-      // selectedKeys: ref<string[]>(["1"]),
+      selectedKeys: ref<string[]>([]),
     };
   },
 });
@@ -70,5 +84,13 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   margin: auto 0;
+}
+
+.footer_box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-flow: column wrap;
 }
 </style>

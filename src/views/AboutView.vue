@@ -29,9 +29,7 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import { useStore } from "vuex";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-ignore
-import MyLayout from "@/layout/MyLayout";
+import MyLayout from "@/layout/MyLayout.vue";
 
 export default defineComponent({
   components: { MyLayout },
