@@ -6,23 +6,33 @@
       @finish="onFinish"
       @finishFailed="onFinishFailed"
     >
-      <a-form-item label="Nova Group" name="nova_group">
-        <a-select allow-clear v-model:value="formState.nova_group">
-          <a-select-option value="1">1</a-select-option>
-          <a-select-option value="2">2</a-select-option>
-          <a-select-option value="3">3</a-select-option>
-          <a-select-option value="4">4</a-select-option>
-        </a-select>
+      <a-form-item label="Product" name="search_terms2">
+        <a-input
+          allow-clear
+          v-model:value="formState.search_terms2"
+          placeholder="Search for words present in the product name, generic name, brands, categories, origins and labels"
+        />
       </a-form-item>
-      <a-form-item label="Nutri Score" name="nutrition_grades">
-        <a-select allow-clear v-model:value="formState.nutrition_grades">
-          <a-select-option value="a">A</a-select-option>
-          <a-select-option value="b">B</a-select-option>
-          <a-select-option value="c">C</a-select-option>
-          <a-select-option value="d">D</a-select-option>
-          <a-select-option value="e">E</a-select-option>
-        </a-select>
+      <a-form-item label="Countries" name="countries">
+        <a-input
+          style="width: 100px"
+          allow-clear
+          v-model:value="formState.countries"
+        />
       </a-form-item>
+      <!--      <a-form-item label="Nutri Score" name="nutrition_grades">-->
+      <!--        <a-select-->
+      <!--          style="width: 80px"-->
+      <!--          allow-clear-->
+      <!--          v-model:value="formState.nutrition_grades"-->
+      <!--        >-->
+      <!--          <a-select-option value="a">A</a-select-option>-->
+      <!--          <a-select-option value="b">B</a-select-option>-->
+      <!--          <a-select-option value="c">C</a-select-option>-->
+      <!--          <a-select-option value="d">D</a-select-option>-->
+      <!--          <a-select-option value="e">E</a-select-option>-->
+      <!--        </a-select>-->
+      <!--      </a-form-item>-->
       <a-form-item>
         <a-button type="primary" html-type="submit">Filter</a-button>
       </a-form-item>
@@ -47,7 +57,9 @@
         <img :src="getNutriScore(text)" style="width: 60px" />
       </template>
       <template v-if="column.dataIndex === 'operation'">
-        <a @click="openModal(record)">info</a>
+        <router-link :to="`/about?id=${record._id}`" @click="openModal(record)"
+          >info</router-link
+        >
       </template>
     </template>
   </a-table>
@@ -58,8 +70,8 @@
     @ok="modalVisit = false"
   >
     <a-descriptions
+      bordered
       :title="selectProduct.product_name + ' - ' + selectProduct.quantity"
-      layout="vertical"
     >
       <a-descriptions-item label="ID"
         >{{ selectProduct._id }}
@@ -83,10 +95,13 @@
 import { usePagination } from "vue-request";
 import { computed, defineComponent, ref, toRefs, reactive } from "vue";
 import axios from "axios";
+import { useStore } from "vuex";
 
 interface FormState {
   nutrition_grades: string;
   nova_group: string;
+
+  [key: string]: any;
 }
 
 const columns = [
@@ -94,6 +109,7 @@ const columns = [
   {
     title: "Name",
     dataIndex: "product_name",
+    //sorter: true,
   },
   {
     title: "Quantity",
@@ -121,9 +137,12 @@ type APIParams = {
 };
 type APIResult = any;
 const queryData = (params: APIParams) => {
-  return axios.get<any>("https://world.openfoodfacts.org?json=true", {
-    params,
-  });
+  return axios.get<any>(
+    "https://world.openfoodfacts.org/cgi/search.pl?json=true&action=process",
+    {
+      params,
+    }
+  );
 };
 
 export default defineComponent({
@@ -135,17 +154,21 @@ export default defineComponent({
       `https://static.openfoodfacts.org/images/attributes/nova-group-${text}.svg`,
     getNutriScore: (text: string) =>
       `https://static.openfoodfacts.org/images/attributes/nutriscore-${text}.svg`,
-    openModal: function (item: any) {
-      this.modalVisit = true;
+    openModal(item: any) {
+      // this.modalVisit = true;
       this.selectProduct = item;
+      console.log(item);
+      this.store.commit("setSelectProduct", item);
     },
   },
 
   setup(props) {
+    const store = useStore();
     const formState = reactive<FormState>({
       nova_group: "",
       nutrition_grades: "",
     });
+    let filterParams: any = {};
     const {
       data: dataSource,
       run,
@@ -168,20 +191,28 @@ export default defineComponent({
 
     const handleTableChange = (
       pag: { pageSize: number; current: number },
-      filters: any
+      filters: any,
+      sorter: any
     ) => {
       run({
         page_size: pag.pageSize!,
         page: pag?.current,
-        ...filters,
+        //sort_by: sorter.order ? "product_name" : "",
+        ...filterParams,
       });
     };
     const onFinish = (values: any) => {
       console.log("Success:", values);
+      filterParams = {
+        ...values,
+        tagtype_0: "countries",
+        tag_contains_0: "contains",
+        tag_0: values.countries,
+      };
       run({
         page_size: pagination.value?.pageSize,
         page: current.value,
-        ...values,
+        ...filterParams,
       });
     };
 
@@ -197,6 +228,8 @@ export default defineComponent({
       handleTableChange,
       onFinish,
       onFinishFailed,
+      filterParams,
+      store,
     };
   },
 });
